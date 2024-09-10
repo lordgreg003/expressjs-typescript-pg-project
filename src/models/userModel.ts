@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import bcrypt from "bcrypt";
-import { IsEmail } from "class-validator";
+import { IsEmail, IsNotEmpty } from "class-validator";
 
 @Entity()
 export class User {
@@ -19,7 +19,6 @@ export class User {
   username?: string;
 
   @Column({ unique: true })
-  @IsEmail({}, { message: "Invalid email format" })
   email?: string;
 
   @Column()

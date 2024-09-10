@@ -2,21 +2,21 @@ import { ValidationError } from "class-validator";
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
 import { AppDataSource } from "../config/ormconfig";
-
 import { User } from "../models/userModel";
 import responseHandle from "../utils/handleResponse";
 import tokenHandler from "../utils/handleToken";
 import { handleValidation } from "../utils/handleValidation";
 
 const userRepository: any = AppDataSource.getRepository(User);
-// const orgRepository: any = AppDataSource.getRepository(Organisation);
 const authController: any = {};
 
+// Registration Logic
 authController.register = asyncHandler(async (req: Request, res: Response) => {
-  const { firstName, lastName, email, password, phone } = req.body;
+  // #swagger.tags = ['Auth']
+  const { firstName, lastName, email, password, age, username } = req.body;
 
   try {
-    // validate the user fields
+    // Validate the user fields
     const errors: ValidationError[] = await handleValidation(
       new User(),
       req.body,
@@ -26,7 +26,7 @@ authController.register = asyncHandler(async (req: Request, res: Response) => {
       return;
     }
 
-    // check if the email exists
+    // Check if the email is already taken
     const emailTaken = await userRepository.findOne({
       where: { email: email.trim().toLowerCase() },
     });
@@ -43,40 +43,26 @@ authController.register = asyncHandler(async (req: Request, res: Response) => {
       return;
     }
 
-    // create a new user
+    // Create a new user (password hashing is done in the User model)
     const newUser = userRepository.create({
       firstName: firstName.trim(),
       lastName: lastName.trim(),
+      username: username.trim().toLowerCase(),
       email: email.trim().toLowerCase(),
-      password: password,
-      phone: phone,
+      password: password.trim(), // No need to hash again here
+      age: age.trim(),
     });
     await userRepository.save(newUser);
 
-    // // create a new Organisation using many to many relationship
-    // const newOrg = orgRepository.create({
-    //   name: `${firstName.trim()}\'s Organisation`,
-    //   description: "New Organisation",
-    //   User: [newUser],
-    // });
-    // await orgRepository.save(newOrg);
-
-    // send the response
+    // Send the success response (No need to return a token here)
     responseHandle.successResponse(res, 201, "Registration successful", {
-      accessToken: tokenHandler.generateToken(
-        {
-          id: newUser.userId,
-          email: newUser.email,
-          phoneNumber: newUser.phoneNumber,
-        },
-        "1d"
-      ),
       user: {
-        userId: newUser.userId,
+        userId: newUser.id,
         firstName: newUser.firstName,
         lastName: newUser.lastName,
+        username: newUser.username,
         email: newUser.email,
-        phone: newUser.phone,
+        age: newUser.age,
       },
     });
   } catch (error: any) {
@@ -84,10 +70,13 @@ authController.register = asyncHandler(async (req: Request, res: Response) => {
   }
 });
 
+// Login Logic
 authController.login = asyncHandler(async (req: Request, res: Response) => {
-  const { email, password } = req.body;
+  // #swagger.tags = ['Auth']
+  const { username, password } = req.body;
+
   try {
-    // validate the user fields
+    // Validate the user fields
     const errors: ValidationError[] = await handleValidation(
       new User(),
       req.body,
@@ -96,24 +85,25 @@ authController.login = asyncHandler(async (req: Request, res: Response) => {
     if (errors.length > 0) {
       return;
     }
-    // check if the email exists
+
+    // Check if the username exists
     const user = await userRepository.findOne({
-      where: { email: email.trim().toLowerCase() },
+      where: { username: username.trim().toLowerCase() },
     });
-    if (!user || user === null || user === undefined) {
+    if (!user) {
       res.status(401).json({
         errors: [
           {
-            field: "email",
-            message: "user does not exist",
+            field: "username",
+            message: "User does not exist",
           },
         ],
       });
       return;
     }
 
-    // check if the password is correct
-    const validPassword = await user.matchPassword(password);
+    // Validate the password (using matchPassword from User model)
+    const validPassword = await user.matchPassword(password.trim());
     if (!validPassword) {
       res.status(401).json({
         errors: [
@@ -126,22 +116,23 @@ authController.login = asyncHandler(async (req: Request, res: Response) => {
       return;
     }
 
-    // send the response
+    // Generate a token and send it along with user details
+    const accessToken = tokenHandler.generateToken(
+      {
+        id: user.id,
+      },
+      "1d" // Token expiration: 1 day
+    );
+
+    // Send the success response with token
     responseHandle.successResponse(res, 200, "Login successful", {
-      accessToken: tokenHandler.generateToken(
-        {
-          id: user.userId,
-          email: user.email,
-          phoneNumber: user.phoneNumber,
-        },
-        "1d"
-      ),
+      accessToken,
       user: {
-        userId: user.userId,
+        userId: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
-        phone: user.phone,
+        age: user.age,
       },
     });
   } catch (error: any) {

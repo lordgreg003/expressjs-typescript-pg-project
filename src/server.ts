@@ -6,7 +6,6 @@ import bodyParser from "body-parser";
 import authRoutes from "./routes/authRoutes";
 import express from "express";
 import { Request, Response, NextFunction } from "express";
-import morgan from "morgan";
 
 import { AppDataSource } from "./config/ormconfig";
 import AuthMiddleware from "./middllewares/userMiddleware";
@@ -17,18 +16,18 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 // Create an instance of the Express app
 const app = express();
+const { readFileSync } = require("fs");
+const swaggerUi = require("swagger-ui-express");
+
+// Read the JSON file synchronously
+const rawData = readFileSync("./src/swagger/swagger_output.json", "utf-8");
+const swaggerFile = JSON.parse(rawData);
 
 // Middleware
 app.use(express.json()); // Body parser for handling JSON data
-app.use(cors()); // Enabling CORS for all requests
-app.use(morgan("dev")); // Logging HTTP requests
+app.use(cors());
+
 app.use(bodyParser.json());
-
-console.log("Database Host:", process.env.DB_HOST);
-console.log("Database Port:", process.env.DB_PORT);
-console.log("Database Username:", process.env.DB_USERNAME);
-console.log("Database Password Type:", typeof process.env.DB_PASSWORD);
-
 console.log("Database Name:", process.env.DB_NAME);
 
 // Database connection setup
@@ -39,19 +38,13 @@ AppDataSource.initialize()
   .catch((error) => {
     console.error("Database connection error:", error);
   });
+AuthMiddleware;
 
 // Routes
-app.post("/api/v1.0", authRoutes); // User registration route
-app.post("/api/v1.0", authRoutes); // User login route
+app.use("/api/v1.0", authRoutes); // Use authRoutes as a middleware
 
-// Example protected route using the AuthMiddleware
-app.get(
-  "/api/protected",
-  AuthMiddleware.protectUser,
-  (req: Request, res: Response) => {
-    res.json({ message: "This is a protected route" });
-  }
-);
+// swagger inititailization
+app.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // Error Handling Middleware
 app.use(errorMiddleware.notFound); // Handle 404 errors
