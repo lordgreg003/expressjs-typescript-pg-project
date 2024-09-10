@@ -1,31 +1,37 @@
-import dotenv from "dotenv";
-import jsonwebtoken from "jsonwebtoken";
-import path from "path";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
-// Configure dotenv to load the .env file
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
+interface TokenHandler {
+  generateToken: (
+    fieldToSecure: string | object,
+    duration?: string | number
+  ) => string;
+  decodeToken: (token: string) => string | JwtPayload;
+}
 
-const secret: string | undefined = process.env.JWT_SECRET;
+const tokenHandler: TokenHandler = {
+  generateToken: (fieldToSecure, duration) => {
+    try {
+      const secret = process.env.JWT_SECRET_KEY as string;
+      if (!secret) throw new Error("JWT secret key is missing");
 
-const tokenHandler: any = {};
+      return jwt.sign({ fieldToSecure }, secret, {
+        expiresIn: duration ? duration : 18408600000, // Defaults to long duration if not provided
+      });
+    } catch (error: any) {
+      throw new Error(`Error generating token: ${error.message}`);
+    }
+  },
 
-tokenHandler.generateToken = (fieldToSecure: any, duration: any) => {
-  try {
-    return jsonwebtoken.sign(fieldToSecure, secret!, {
-      expiresIn: duration ? duration : 18408600000,
-    });
-  } catch (error: any) {
-    throw new Error(error);
-  }
-};
+  decodeToken: (token) => {
+    try {
+      const secret = process.env.JWT_SECRET as string;
+      if (!secret) throw new Error("JWT secret key is missing");
 
-tokenHandler.decodeToken = (token: string) => {
-  try {
-    return jsonwebtoken.verify(token, secret!);
-  } catch (error: any) {
-    // res.status(422);
-    throw new Error(error);
-  }
+      return jwt.verify(token, secret);
+    } catch (error: any) {
+      throw new Error(`Error decoding token: ${error.message}`);
+    }
+  },
 };
 
 export default tokenHandler;
