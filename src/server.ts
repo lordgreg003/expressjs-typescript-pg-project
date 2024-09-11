@@ -4,8 +4,8 @@ import path from "path";
 import cors from "cors";
 import bodyParser from "body-parser";
 import authRoutes from "./routes/authRoutes";
+import adminRoutes from "./routes/authRoutes";
 import express from "express";
-import { Request, Response, NextFunction } from "express";
 
 import { AppDataSource } from "./config/ormconfig";
 import AuthMiddleware from "./middllewares/userMiddleware";
@@ -23,12 +23,14 @@ const swaggerUi = require("swagger-ui-express");
 const rawData = readFileSync("./src/swagger/swagger_output.json", "utf-8");
 const swaggerFile = JSON.parse(rawData);
 
-// Middleware
 app.use(express.json()); // Body parser for handling JSON data
 app.use(cors());
-
 app.use(bodyParser.json());
+app.use("/api/v1.0", authRoutes);
 console.log("Database Name:", process.env.DB_NAME);
+
+// swagger inititailization
+app.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 
 // Database connection setup
 AppDataSource.initialize()
@@ -38,13 +40,15 @@ AppDataSource.initialize()
   .catch((error) => {
     console.error("Database connection error:", error);
   });
-AuthMiddleware;
-
 // Routes
-app.use("/api/v1.0", authRoutes); // Use authRoutes as a middleware
 
-// swagger inititailization
-app.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerFile));
+// protected routes
+
+app.use("/api/v1.0", adminRoutes);
+// app.use("/api/", profileRoutes);
+// app.use("/api/", todoRoutes);
+console.log(adminRoutes); // Check if this is a valid router
+console.log(AuthMiddleware.protectUser); // Check if this is a valid middleware function
 
 // Error Handling Middleware
 app.use(errorMiddleware.notFound); // Handle 404 errors

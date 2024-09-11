@@ -8,7 +8,6 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 import bcrypt from "bcrypt";
-import { IsEmail, IsNotEmpty } from "class-validator";
 
 @Entity()
 export class User {
