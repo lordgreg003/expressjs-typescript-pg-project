@@ -1,16 +1,74 @@
 import { ValidationError } from "class-validator";
-import { Request, Response, RequestHandler } from "express";
+import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { getRepository } from "typeorm";
 import { User } from "../models/userModel";
-import successResponse from "../utils/handleResponse";
-import { handleValidation } from "../utils/handleValidation"; // Ensure this utility is implemented
-import AdminController from "../types/userTypes";
+import { handleValidation } from "../utils/handleValidation";
 import { AppDataSource } from "../config/ormconfig";
+import responseHandle from "../utils/handleResponse";
 
 const userRepository: any = AppDataSource.getRepository(User);
+// const AdminController: any = {};
 
-const admin: AdminController = {
+// AdminController.register = asyncHandler(async (req: Request, res: Response) => {
+//   // #swagger.tags = ['Auth']
+//   try {
+//     const { firstName, lastName, email, password, age, username } = req.body;
+
+//     // Validate the user fields
+//     const errors: ValidationError[] = await handleValidation(
+//       new User(),
+//       req.body,
+//       res
+//     );
+//     if (errors.length > 0) {
+//       return;
+//     }
+
+//     // Check if the email is already taken
+//     const emailTaken = await userRepository.findOne({
+//       where: { email: email.trim().toLowerCase() },
+//     });
+//     if (emailTaken) {
+//       res.status(422).json({
+//         status: "failed",
+//         errors: [
+//           {
+//             field: "email",
+//             message: "Email already taken",
+//           },
+//         ],
+//       });
+//       return;
+//     }
+
+//     // Create a new user (password hashing is done in the User model)
+//     const newUser = userRepository.create({
+//       firstName: firstName.trim(),
+//       lastName: lastName.trim(),
+//       username: username.trim().toLowerCase(),
+//       email: email.trim().toLowerCase(),
+//       password: password.trim(), // No need to hash again here
+//       age: age.trim(),
+//     });
+//     await userRepository.save(newUser);
+
+//     // Send the success response (No need to return a token here)
+//     responseHandle.successResponse(res, 201, "Registration successful", {
+//       user: {
+//         userId: newUser.id,
+//         firstName: newUser.firstName,
+//         lastName: newUser.lastName,
+//         username: newUser.username,
+//         email: newUser.email,
+//         age: newUser.age,
+//       },
+//     });
+//   } catch (error: any) {
+//     throw new Error(error);
+//   }
+// });
+
+const AdminController = {
   // Health check
   health: asyncHandler(async (req: Request, res: Response) => {
     res.send("Hello World!");
@@ -39,6 +97,7 @@ const admin: AdminController = {
         res
       );
       if (errors.length > 0) {
+        console.log(errors);
         return;
       }
 
@@ -66,7 +125,7 @@ const admin: AdminController = {
       await userRepository.save(newUser);
 
       // Send the success response
-      successResponse(res, 201, "Registration successful", {
+      responseHandle.successResponse(res, 201, "Registration successful", {
         user: {
           userId: newUser.id,
           firstName: newUser.firstName,
@@ -100,7 +159,7 @@ const admin: AdminController = {
     //   }
     // }
     const user = await userRepository.findOneBy({ id: Number(req.params.id) });
-    const { firstName, lastName, email, password, age, username } = req.body;
+    const { firstName, lastName, email, age, username } = req.body;
 
     try {
       if (!user) {
@@ -112,14 +171,19 @@ const admin: AdminController = {
         firstName: firstName?.trim(),
         lastName: lastName?.trim(),
         email: email?.trim(),
-        password: password?.trim(),
+        // password: password?.trim(),
         age: age?.trim(),
         username: username?.trim().toLowerCase(),
       });
 
       await userRepository.save(user);
 
-      successResponse(res, 200, "User updated successfully", user);
+      responseHandle.successResponse(
+        res,
+        200,
+        "User updated successfully",
+        user
+      );
     } catch (error: any) {
       res.status(500).json({ status: "failed", message: error.message });
     }
@@ -145,7 +209,12 @@ const admin: AdminController = {
 
       await userRepository.remove(user);
 
-      successResponse(res, 200, "User deleted successfully", "User deleted");
+      responseHandle.successResponse(
+        res,
+        200,
+        "User deleted successfully",
+        "User deleted"
+      );
     } catch (error: any) {
       res.status(500).json({ status: "failed", message: error.message });
     }
@@ -169,7 +238,7 @@ const admin: AdminController = {
         return;
       }
 
-      successResponse(res, 200, "User found successfully", user);
+      responseHandle.successResponse(res, 200, "User found successfully", user);
     } catch (error: any) {
       res.status(500).json({ status: "failed", message: error.message });
     }
@@ -182,11 +251,19 @@ const admin: AdminController = {
     // #swagger.description = 'Retrieves a list of all users.'
     try {
       const users = await userRepository.find();
-      successResponse(res, 200, "Users found successfully", users);
+      responseHandle.successResponse(
+        res,
+        200,
+        "Users found successfully",
+        users
+      );
     } catch (error: any) {
+      console.log(error);
       res.status(500).json({ status: "failed", message: error.message });
     }
   }),
 };
 
-export default admin;
+export default AdminController;
+console.log("Admin Controller:", AdminController);
+console.log("Register Handler:", AdminController.register);

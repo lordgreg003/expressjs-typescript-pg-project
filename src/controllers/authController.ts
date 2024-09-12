@@ -121,7 +121,7 @@ authController.login = asyncHandler(async (req: Request, res: Response) => {
       {
         id: user.id,
       },
-      "1d" // Token expiration: 1 day
+      "1d"
     );
 
     // Send the success response with token

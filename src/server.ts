@@ -4,7 +4,9 @@ import path from "path";
 import cors from "cors";
 import bodyParser from "body-parser";
 import authRoutes from "./routes/authRoutes";
-import adminRoutes from "./routes/authRoutes";
+import adminRoutes from "./routes/adminRoutes";
+import profileRoutes from "./routes/profileRoutes";
+
 import express from "express";
 
 import { AppDataSource } from "./config/ormconfig";
@@ -27,6 +29,10 @@ app.use(express.json()); // Body parser for handling JSON data
 app.use(cors());
 app.use(bodyParser.json());
 app.use("/api/v1.0", authRoutes);
+app.use("/api/v1.0", adminRoutes);
+console.log("adminRoutes", adminRoutes); // Check if this is a valid router
+
+app.use("/api/v1.0", profileRoutes);
 console.log("Database Name:", process.env.DB_NAME);
 
 // swagger inititailization
@@ -44,11 +50,8 @@ AppDataSource.initialize()
 
 // protected routes
 
-app.use("/api/v1.0", adminRoutes);
-// app.use("/api/", profileRoutes);
-// app.use("/api/", todoRoutes);
-console.log(adminRoutes); // Check if this is a valid router
-console.log(AuthMiddleware.protectUser); // Check if this is a valid middleware function
+// app.use("/api/v1.0", profileRoutes);
+// console.log(AuthMiddleware.protectUser); // Check if this is a valid middleware function
 
 // Error Handling Middleware
 app.use(errorMiddleware.notFound); // Handle 404 errors
