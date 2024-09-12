@@ -7,86 +7,20 @@ import { AppDataSource } from "../config/ormconfig";
 import responseHandle from "../utils/handleResponse";
 
 const userRepository: any = AppDataSource.getRepository(User);
-// const AdminController: any = {};
-
-// AdminController.register = asyncHandler(async (req: Request, res: Response) => {
-//   // #swagger.tags = ['Auth']
-//   try {
-//     const { firstName, lastName, email, password, age, username } = req.body;
-
-//     // Validate the user fields
-//     const errors: ValidationError[] = await handleValidation(
-//       new User(),
-//       req.body,
-//       res
-//     );
-//     if (errors.length > 0) {
-//       return;
-//     }
-
-//     // Check if the email is already taken
-//     const emailTaken = await userRepository.findOne({
-//       where: { email: email.trim().toLowerCase() },
-//     });
-//     if (emailTaken) {
-//       res.status(422).json({
-//         status: "failed",
-//         errors: [
-//           {
-//             field: "email",
-//             message: "Email already taken",
-//           },
-//         ],
-//       });
-//       return;
-//     }
-
-//     // Create a new user (password hashing is done in the User model)
-//     const newUser = userRepository.create({
-//       firstName: firstName.trim(),
-//       lastName: lastName.trim(),
-//       username: username.trim().toLowerCase(),
-//       email: email.trim().toLowerCase(),
-//       password: password.trim(), // No need to hash again here
-//       age: age.trim(),
-//     });
-//     await userRepository.save(newUser);
-
-//     // Send the success response (No need to return a token here)
-//     responseHandle.successResponse(res, 201, "Registration successful", {
-//       user: {
-//         userId: newUser.id,
-//         firstName: newUser.firstName,
-//         lastName: newUser.lastName,
-//         username: newUser.username,
-//         email: newUser.email,
-//         age: newUser.age,
-//       },
-//     });
-//   } catch (error: any) {
-//     throw new Error(error);
-//   }
-// });
 
 const AdminController = {
-  // Health check
+  // #swagger.tags = ['User Management']
+
   health: asyncHandler(async (req: Request, res: Response) => {
     res.send("Hello World!");
   }),
 
   // Register user
+  // #swagger.tags = ['User Management']
+
   register: asyncHandler(async (req: Request, res: Response) => {
     // #swagger.tags = ['User Management']
-    // #swagger.summary = 'Register a new user'
-    // #swagger.description = 'Registers a new user with the provided details, performs validation and checks if the email is already taken.'
-    // #swagger.parameters['body'] = {
-    //   in: 'body',
-    //   description: 'User registration details',
-    //   required: true,
-    //   schema: {
-    //     $ref: '#/definitions/User'
-    //   }
-    // }
+
     const { firstName, lastName, email, password, age, username } = req.body;
 
     try {
@@ -113,7 +47,6 @@ const AdminController = {
         return;
       }
 
-      // Create a new user (password hashing is done in the User model)
       const newUser = userRepository.create({
         firstName: firstName.trim(),
         lastName: lastName.trim(),
@@ -141,23 +74,11 @@ const AdminController = {
   }),
 
   // Update user
+  // #swagger.tags = ['User Management']
+
   update: asyncHandler(async (req: Request, res: Response) => {
     // #swagger.tags = ['User Management']
-    // #swagger.summary = 'Update user details'
-    // #swagger.description = 'Updates the details of an existing user identified by the user ID.'
-    // #swagger.parameters['id'] = {
-    //   description: 'User ID',
-    //   required: true,
-    //   type: 'integer'
-    // }
-    // #swagger.parameters['body'] = {
-    //   in: 'body',
-    //   description: 'Updated user details',
-    //   required: true,
-    //   schema: {
-    //     $ref: '#/definitions/User'
-    //   }
-    // }
+
     const user = await userRepository.findOneBy({ id: Number(req.params.id) });
     const { firstName, lastName, email, age, username } = req.body;
 
@@ -190,15 +111,11 @@ const AdminController = {
   }),
 
   // Delete user
+  // #swagger.tags = ['User Management']
+
   delete: asyncHandler(async (req: Request, res: Response) => {
     // #swagger.tags = ['User Management']
-    // #swagger.summary = 'Delete a user'
-    // #swagger.description = 'Deletes a user identified by the user ID.'
-    // #swagger.parameters['id'] = {
-    //   description: 'User ID',
-    //   required: true,
-    //   type: 'integer'
-    // }
+
     const user = await userRepository.findOneBy({ id: Number(req.params.id) });
 
     try {
@@ -221,15 +138,11 @@ const AdminController = {
   }),
 
   // Get user by ID
+  // #swagger.tags = ['User Management']
+
   getById: asyncHandler(async (req: Request, res: Response) => {
     // #swagger.tags = ['User Management']
-    // #swagger.summary = 'Get user by ID'
-    // #swagger.description = 'Retrieves user details by their ID.'
-    // #swagger.parameters['id'] = {
-    //   description: 'User ID',
-    //   required: true,
-    //   type: 'integer'
-    // }
+
     const user = await userRepository.findOneBy({ id: Number(req.params.id) });
 
     try {
@@ -245,10 +158,11 @@ const AdminController = {
   }),
 
   // Get all users
+  // #swagger.tags = ['User Management']
+
   getAll: asyncHandler(async (req: Request, res: Response) => {
     // #swagger.tags = ['User Management']
-    // #swagger.summary = 'Get all users'
-    // #swagger.description = 'Retrieves a list of all users.'
+
     try {
       const users = await userRepository.find();
       responseHandle.successResponse(
@@ -265,5 +179,3 @@ const AdminController = {
 };
 
 export default AdminController;
-console.log("Admin Controller:", AdminController);
-console.log("Register Handler:", AdminController.register);

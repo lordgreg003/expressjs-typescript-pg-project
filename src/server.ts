@@ -30,10 +30,8 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use("/api/v1.0", authRoutes);
 app.use("/api/v1.0", adminRoutes);
-console.log("adminRoutes", adminRoutes); // Check if this is a valid router
 
 app.use("/api/v1.0", profileRoutes);
-console.log("Database Name:", process.env.DB_NAME);
 
 // swagger inititailization
 app.use("/doc", swaggerUi.serve, swaggerUi.setup(swaggerFile));
