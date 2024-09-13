@@ -10,9 +10,9 @@ export const AppDataSource = new DataSource({
   type: "postgres",
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT!),
-  url:
-    process.env.DATABASE_URL ||
-    "postgres://postgres:password@localhost:5432/dev", // Use environment variable
+  // url:
+  //   process.env.DATABASE_URL ||
+  //   "postgres://postgres:password@localhost:5432/dev", // Use environment variable
   username: process.env.DB_USERNAME || "postgres",
   password: process.env.DB_PASSWORD || "password",
   database: process.env.DB_NAME,
