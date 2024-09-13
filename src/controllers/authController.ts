@@ -28,7 +28,7 @@ authController.register = asyncHandler(async (req: Request, res: Response) => {
 
     // Check if the email is already taken
     const emailTaken = await userRepository.findOne({
-      where: { email: email.trim().toLowerCase() },
+      where: { email: (email || "").trim().toLowerCase() },
     });
     if (emailTaken) {
       res.status(422).json({
@@ -45,12 +45,12 @@ authController.register = asyncHandler(async (req: Request, res: Response) => {
 
     // Create a new user (password hashing is done in the User model)
     const newUser = userRepository.create({
-      firstName: firstName.trim(),
-      lastName: lastName.trim(),
-      username: username.trim().toLowerCase(),
-      email: email.trim().toLowerCase(),
-      password: password.trim(), // No need to hash again here
-      age: age.trim(),
+      firstName: (firstName || "").trim(),
+      lastName: (lastName || "").trim(),
+      username: (username || "").trim().toLowerCase(),
+      email: (email || "").trim().toLowerCase(),
+      password: (password || "").trim(), // No need to hash again here
+      age: (age || "").trim(), // Ensure age is handled correctly (e.g., might not need trim)
     });
     await userRepository.save(newUser);
 
