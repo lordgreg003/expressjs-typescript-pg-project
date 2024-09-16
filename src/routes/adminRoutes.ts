@@ -1,8 +1,11 @@
 import { Router } from "express";
 
 import adminController from "../controllers/adminController";
+import AuthMiddleware from "../middllewares/userMiddleware";
 
 const adminRoutes = Router();
+
+adminRoutes.use(AuthMiddleware.protectUser);
 
 adminRoutes.get("/admin/users", adminController.getAll);
 

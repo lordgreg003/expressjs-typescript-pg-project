@@ -136,6 +136,7 @@ const AdminController = {
       res.status(500).json({ status: "failed", message: error.message });
     }
   }),
+      
 
   // Get user by ID
   // #swagger.tags = ['User Management']

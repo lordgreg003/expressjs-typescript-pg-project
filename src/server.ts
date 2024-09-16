@@ -10,7 +10,7 @@ import profileRoutes from "./routes/profileRoutes";
 import express from "express";
 
 import { AppDataSource } from "./config/ormconfig";
-import AuthMiddleware from "./middllewares/userMiddleware";
+// import AuthMiddleware from "./middllewares/userMiddleware";
 import errorMiddleware from "./middllewares/errorMiddleware";
 
 // Load environment variables from .env file
@@ -29,8 +29,10 @@ app.use(express.json()); // Body parser for handling JSON data
 app.use(cors());
 app.use(bodyParser.json());
 app.use("/api/v1.0", authRoutes);
-app.use("/api/v1.0", adminRoutes);
 
+// app.use(AuthMiddleware.protectUser);
+
+app.use("/api/v1.0", adminRoutes);
 app.use("/api/v1.0", profileRoutes);
 
 // swagger inititailization

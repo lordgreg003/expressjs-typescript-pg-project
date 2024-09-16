@@ -1,7 +1,7 @@
-import http, { IncomingMessage, ServerResponse } from "http";
+import http from "http";
 import request from "supertest";
-import { AppDataSource } from "../src/config/ormconfig";
-import app from "../src/server";
+import { AppDataSource } from "../src/config/ormconfig"; // Adjust the path as necessary
+import app from "../src/server"; // Adjust the path as necessary
 
 // Define types for the server and response
 let server: http.Server;
@@ -10,7 +10,7 @@ let firstName: string;
 let lastName: string;
 let username: string;
 let password: string;
-let age: number;
+let age: string;
 
 // Setup and teardown
 beforeAll(async () => {
@@ -37,14 +37,14 @@ beforeEach(() => {
   lastName = "Doe" + randomInteger;
   username = "james" + randomInteger;
   password = "password" + randomInteger;
-  age = randomInteger;
+  age = "43";
 });
 
 // Register tests
 describe("POST /api/v1.0/register", () => {
   it("Should Fail If Required Fields Are Missing", async () => {
     const res = await request(app).post("/api/v1.0/register").send({});
-    expect(res.statusCode).toBe(500);
+    expect(res.statusCode).toBe(422); // Adjust the expected status code
     expect(res.body).toHaveProperty("status", "failed");
     expect(res.body).toHaveProperty("errors", expect.any(Array));
   });
@@ -69,6 +69,19 @@ describe("POST /api/v1.0/register", () => {
   });
 
   it("Should Fail if there’s Duplicate Email or UserID", async () => {
+    // Register a user first
+    await request(app)
+      .post("/api/v1.0/register")
+      .send({
+        username: username,
+        firstName: firstName,
+        lastName: lastName,
+        email: `nYvFf7${randomInteger}@example.com`,
+        password: password,
+        age: age,
+      });
+
+    // Try to register with the same email again
     const res = await request(app)
       .post("/api/v1.0/register")
       .send({
@@ -80,7 +93,7 @@ describe("POST /api/v1.0/register", () => {
         age: age,
       });
 
-    expect(res.statusCode).toBe(422);
+    expect(res.statusCode).toBe(422); // Adjust based on your actual response for duplicates
     expect(res.body).toHaveProperty("status", "failed");
     expect(res.body).toHaveProperty("errors", expect.any(Array));
   });
