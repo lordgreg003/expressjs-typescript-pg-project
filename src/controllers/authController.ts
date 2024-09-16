@@ -142,19 +142,30 @@ authController.login = asyncHandler(async (req: Request, res: Response) => {
       "1d"
     );
 
-    // Send the success response with token
-    responseHandle.successResponse(res, 200, "Login successful", {
-      accessToken,
-      user: {
-        userId: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        age: user.age,
+    // Send the success response
+    res.status(200).json({
+      status: "success",
+      message: "Login successful",
+      data: {
+        accessToken,
+        user: {
+          id: user.id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          age: user.age,
+        },
       },
     });
   } catch (error: any) {
-    throw new Error(error);
+    console.error("Error during login:", error); // Log the error for debugging
+    res.status(500).json({
+      errors: [
+        {
+          message: "Server error. Please try again later.",
+        },
+      ],
+    });
   }
 });
 

@@ -98,3 +98,18 @@ describe("POST /api/v1.0/register", () => {
     expect(res.body).toHaveProperty("errors", expect.any(Array));
   });
 });
+
+// Login
+describe("POST /api/v1.0/login", () => {
+  it("should login a user", async () => {
+    const res = await request(app).post("/api/v1.0/login").send({
+      username: "somtoo1",
+      password: "12345678",
+    });
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty("status", "success");
+    expect(res.body).toHaveProperty("message", "Login successful");
+    expect(res.body.data).toHaveProperty("accessToken", expect.any(String));
+    expect(res.body.data).toHaveProperty("user", expect.any(Object));
+  });
+});
