@@ -116,9 +116,11 @@ const AdminController = {
   delete: asyncHandler(async (req: Request, res: Response) => {
     // #swagger.tags = ['User Management']
 
-    const user = await userRepository.findOneBy({ id: Number(req.params.id) });
-
     try {
+      const user = await userRepository.findOneBy({
+        id: Number(req.params.id),
+      });
+
       if (!user) {
         res.status(404).json({ status: "failed", message: "User not found" });
         return;
@@ -126,17 +128,15 @@ const AdminController = {
 
       await userRepository.remove(user);
 
-      responseHandle.successResponse(
-        res,
-        200,
-        "User deleted successfully",
-        "User deleted"
-      );
+      res.status(200).json({
+        status: "success",
+        message: "User deleted",
+        data: user, // Return the single user object
+      });
     } catch (error: any) {
       res.status(500).json({ status: "failed", message: error.message });
     }
   }),
-      
 
   // Get user by ID
   // #swagger.tags = ['User Management']
@@ -144,17 +144,33 @@ const AdminController = {
   getById: asyncHandler(async (req: Request, res: Response) => {
     // #swagger.tags = ['User Management']
 
-    const user = await userRepository.findOneBy({ id: Number(req.params.id) });
-
     try {
+      // Fetch the user by ID
+      const user = await userRepository.findOneBy({
+        id: Number(req.params.id),
+      });
+
+      // If user not found, return 404 status
       if (!user) {
-        res.status(404).json({ status: "failed", message: "User not found" });
+        res.status(404).json({
+          status: "failed",
+          message: "User not found",
+        });
         return;
       }
 
-      responseHandle.successResponse(res, 200, "User found successfully", user);
+      // If user found, return the user details
+      res.status(200).json({
+        status: "success",
+        message: "User found successfully",
+        data: user, // Return the single user object
+      });
     } catch (error: any) {
-      res.status(500).json({ status: "failed", message: error.message });
+      // Handle any errors that occur
+      res.status(500).json({
+        status: "failed",
+        message: error.message,
+      });
     }
   }),
 
@@ -163,15 +179,16 @@ const AdminController = {
 
   getAll: asyncHandler(async (req: Request, res: Response) => {
     // #swagger.tags = ['User Management']
-
     try {
       const users = await userRepository.find();
-      responseHandle.successResponse(
-        res,
-        200,
-        "Users found successfully",
-        users
-      );
+
+      // Return a response with an empty array if no users found
+      res.status(200).json({
+        status: "success",
+        message:
+          users.length > 0 ? "Users found successfully" : "No users found",
+        data: users.length > 0 ? users : [], // Ensure it's an array, even if empty
+      });
     } catch (error: any) {
       console.log(error);
       res.status(500).json({ status: "failed", message: error.message });
