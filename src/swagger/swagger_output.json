@@ -47,6 +47,9 @@
           }
         ],
         "responses": {
+          "201": {
+            "description": "Created"
+          },
           "422": {
             "description": "Unprocessable Entity"
           }
@@ -77,8 +80,14 @@
           }
         ],
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "401": {
             "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
@@ -162,11 +171,16 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "401": {
+            "description": "Unauthorized"
           }
         }
       },
@@ -178,11 +192,16 @@
             "in": "path",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
           }
         ],
         "responses": {
-          "default": {
-            "description": ""
+          "401": {
+            "description": "Unauthorized"
           }
         }
       }

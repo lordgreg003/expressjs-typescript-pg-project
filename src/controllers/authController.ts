@@ -51,7 +51,7 @@ authController.register = asyncHandler(
         username: (username || "").trim().toLowerCase(),
         email: (email || "").trim().toLowerCase(),
         password: (password || "").trim(),
-        age: age,
+        age: age || "",
       });
 
       await userRepository.save(newUser);
