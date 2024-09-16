@@ -1,74 +1,58 @@
-import { Request, Response, NextFunction } from "express";
+import dotenv from "dotenv";
+import { NextFunction, Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import { User } from "../models/userModel"; // Adjust the import path as needed
-import tokenHandler from "../utils/handleToken"; // Adjust the import path as needed
-import { AppDataSource } from "../config/ormconfig"; // Adjust path as necessary
+import path from "path";
 
-const userRepository = AppDataSource.getRepository(User);
+// import { User } from '../entity/user.entities';
+import tokenHandler from "../utils/handleToken";
+import { User } from "../models/userModel";
+import { AppDataSource } from "../config/ormconfig";
 
-interface DecodedToken {
-  fieldToSecure: {
-    username: string;
-  };
-}
-
-interface AuthRequest extends Request {
-  user?: any; // Define a proper type for user if available
-}
+// Configure dotenv to load the .env file
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 /**
- * @description This middleware checks the user token supplied as Bearer authorization
+ * @description This middleware checks the user admin token supplied as Bearer authorization
  * @required Bearer Authorization
  */
-const AuthMiddleware = {
-  protectUser: asyncHandler(
-    async (req: AuthRequest, res: Response, next: NextFunction) => {
-      const receivedToken = req.headers.authorization;
-      let token: string | undefined;
-      const eMessage =
-        "You are not authorized to use this service, token failed";
 
-      if (receivedToken && receivedToken.startsWith("Bearer ")) {
-        try {
-          token = receivedToken.split(" ")[1];
+const AuthMiddleware: any = {};
+const userRepository: any = AppDataSource.getRepository(User);
 
-          if (!token) {
-            res
-              .status(401)
-              .json({ message: "Token is missing from authorization header." });
-            return;
-          }
+AuthMiddleware.protectUser = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    let receivedToken: string | undefined = req.headers.authorization;
+    let token: any;
 
-          const decoded = tokenHandler.decodeToken(token) as DecodedToken;
-          console.log("Decoded token details:", decoded);
+    if (receivedToken && receivedToken.startsWith("Bearer")) {
+      try {
+        token = receivedToken.split(" ")[1];
+        const decoded: any = tokenHandler.decodeToken(token);
 
-          const user = await userRepository.findOne({
-            where: { username: decoded.fieldToSecure.username },
-            select: ["id", "firstName", "lastName", "email", "age"], // Adjust fields as needed
-          });
-
-          if (!user) {
-            res.status(401).json({
-              message: "You are not authorized to use this service yet.",
-            });
-            return;
-          }
-
-          req.user = user;
-
-          next();
-        } catch (error) {
-          console.error("Error decoding token or finding user:", error);
-          res.status(401).json({ message: eMessage });
-        }
-      } else {
-        res.status(401).json({
-          message:
-            "You are not authorized to use this service, no token provided.",
+        const user = await userRepository.findOne({
+          where: { email: decoded.email },
+          select: ["id", "firstName", "lastName", "email", "password", "age"],
         });
+
+        if (!user) {
+          res.status(401);
+          throw new Error("You are not authorized to use this service yet. ");
+        }
+
+        // req.user = user;
+      } catch (error: any) {
+        res.status(401);
+        throw new Error(error);
       }
     }
-  ),
-};
+    if (!token) {
+      res.status(401);
+      throw new Error(
+        "You are not authorized to use this service, no token provided."
+      );
+    }
+    next();
+  }
+);
 
 export default AuthMiddleware;

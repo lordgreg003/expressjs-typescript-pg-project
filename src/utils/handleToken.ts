@@ -14,8 +14,10 @@ const tokenHandler: TokenHandler = {
       const secret = process.env.JWT_SECRET_KEY as string;
       if (!secret) throw new Error("JWT secret key is missing");
 
+      console.log("JWT Secret Key for signing:", secret);
+
       return jwt.sign({ fieldToSecure }, secret, {
-        expiresIn: duration ? duration : 18408600000, // Defaults to long duration if not provided
+        expiresIn: duration ? duration : "30d",
       });
     } catch (error: any) {
       throw new Error(`Error generating token: ${error.message}`);
@@ -24,8 +26,11 @@ const tokenHandler: TokenHandler = {
 
   decodeToken: (token) => {
     try {
-      const secret = process.env.JWT_SECRET as string;
+      const secret = process.env.JWT_SECRET_KEY as string;
       if (!secret) throw new Error("JWT secret key is missing");
+      ("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmaWVsZFRvU2VjdXJlIjp7ImlkIjoxOX0sImlhdCI6MTcyNjI0NjkzNCwiZXhwIjoxNzI2MzMzMzM0fQ.94o5fVJdr4XHU2MImkMix6-k8JD2E9qEH8KOpLtNvK4");
+
+      console.log("JWT Secret Key for verifying:", secret);
 
       return jwt.verify(token, secret);
     } catch (error: any) {
