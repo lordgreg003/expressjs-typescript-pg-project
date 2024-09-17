@@ -79,10 +79,11 @@ const AdminController = {
   update: asyncHandler(async (req: Request, res: Response) => {
     // #swagger.tags = ['User Management']
 
-    const user = await userRepository.findOneBy({ id: Number(req.params.id) });
-    const { firstName, lastName, email, age, username } = req.body;
-
     try {
+      const user = await userRepository.findOneBy({
+        id: Number(req.params.id),
+      });
+      const { firstName, lastName, email, age, username, password } = req.body;
       if (!user) {
         res.status(404).json({ status: "failed", message: "User not found" });
         return;
@@ -92,21 +93,20 @@ const AdminController = {
         firstName: firstName?.trim(),
         lastName: lastName?.trim(),
         email: email?.trim(),
-        // password: password?.trim(),
+        password: password?.trim(),
         age: age?.trim(),
         username: username?.trim().toLowerCase(),
       });
 
       await userRepository.save(user);
 
-      responseHandle.successResponse(
-        res,
-        200,
-        "User updated successfully",
-        user
-      );
+      res.status(200).json({
+        status: "success",
+        message: "User updated successfully",
+        data: user, // Return the single user object
+      });
     } catch (error: any) {
-      res.status(500).json({ status: "failed", message: error.message });
+      res.status(500).json({ status: "failed", message: "User not found" });
     }
   }),
 
