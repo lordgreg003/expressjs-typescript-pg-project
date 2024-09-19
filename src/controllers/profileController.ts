@@ -21,8 +21,8 @@ const profileController = {
       const user = await userRepository.findOneBy({ id: parseInt(id) });
 
       if (!user) {
-        res.status(404);
-        throw new Error("User not found");
+        res.status(404).json({ status: "failed", message: "User not found" });
+        return;
       }
 
       user.username = username;
@@ -32,14 +32,13 @@ const profileController = {
       user.age = age;
       user.password = password;
 
-      const updatedUser = await userRepository.save(user);
+      const users = await userRepository.save(user);
 
-      responseHandle.successResponse(
-        res,
-        200,
-        "Profile updated successfully",
-        updatedUser
-      );
+      res.status(200).json({
+        status: "success",
+        message: "User updated sucessfully",
+        data: users, // Return the single user object
+      });
     } catch (error: any) {
       res.status(500);
       throw new Error(error.message);
@@ -58,16 +57,15 @@ const profileController = {
       const user = await userRepository.findOneBy({ id: parseInt(id) });
 
       if (!user) {
-        res.status(404);
-        throw new Error("User not found");
+        res.status(404).json({ status: "failed", message: "User not found" });
+        return;
       }
 
-      responseHandle.successResponse(
-        res,
-        200,
-        "Profile found successfully",
-        user
-      );
+      res.status(200).json({
+        status: "success",
+        message: "User updated sucessfully",
+        data: user, // Return the single user object
+      });
     } catch (error: any) {
       res.status(500);
       throw new Error(error.message);

@@ -37,67 +37,67 @@ beforeEach(() => {
   lastName = "Doe" + randomInteger;
   username = "james" + randomInteger;
   password = "password" + randomInteger;
-  age = "16";
+  age = "100";
 });
 
 // // // Register tests
-// // describe("POST /api/v1.0/register", () => {
-// //   it("Should Fail If Required Fields Are Missing", async () => {
-// //     const res = await request(app).post("/api/v1.0/register").send({});
-// //     expect(res.statusCode).toBe(422); // Adjust the expected status code
-// //     expect(res.body).toHaveProperty("status", "failed");
-// //     // expect(res.body).toHaveProperty("errors", expect.any(Array));
-// //   });
+// describe("POST /api/v1.0/register", () => {
+//   it("Should Fail If Required Fields Are Missing", async () => {
+//     const res = await request(app).post("/api/v1.0/register").send({});
+//     expect(res.statusCode).toBe(422); // Adjust the expected status code
+//     expect(res.body).toHaveProperty("status", "failed");
+//     // expect(res.body).toHaveProperty("errors", expect.any(Array));
+//   });
 
-// //   it("should register a new user", async () => {
-// //     const res = await request(app)
-// //       .post("/api/v1.0/register")
-// //       .send({
-// //         username: username,
-// //         firstName: firstName,
-// //         lastName: lastName,
-// //         email: `nYvFf7${randomInteger}@example.com`,
-// //         password: password,
-// //         age: age,
-// //       });
+//   it("should register a new user", async () => {
+//     const res = await request(app)
+//       .post("/api/v1.0/register")
+//       .send({
+//         username: username,
+//         firstName: firstName,
+//         lastName: lastName,
+//         email: `nYvFf7${randomInteger}@example.com`,
+//         password: password,
+//         age: age,
+//       });
 
-// //     expect(res.statusCode).toBe(201);
-// //     expect(res.body).toHaveProperty("status", "success");
-// //     expect(res.body).toHaveProperty("message", "Registration successful");
-// //     expect(res.body.data).toHaveProperty("accessToken", expect.any(String));
-// //     expect(res.body.data).toHaveProperty("user", expect.any(Object));
-// //   });
+//     expect(res.statusCode).toBe(201);
+//     expect(res.body).toHaveProperty("status", "success");
+//     expect(res.body).toHaveProperty("message", "Registration successful");
+//     expect(res.body.data).toHaveProperty("accessToken", expect.any(String));
+//     // expect(res.body.data).toHaveProperty("user", expect.any(Object));
+//   });
 
-// //   it("Should Fail if there’s Duplicate Email or UserID", async () => {
-// //     // Register a user first
-// //     await request(app)
-// //       .post("/api/v1.0/register")
-// //       .send({
-// //         username: username,
-// //         firstName: firstName,
-// //         lastName: lastName,
-// //         email: `nYvFf7${randomInteger}@example.com`,
-// //         password: password,
-// //         age: age,
-// //       });
+//   it("Should Fail if there’s Duplicate Email or UserID", async () => {
+//     // Register a user first
+//     await request(app)
+//       .post("/api/v1.0/register")
+//       .send({
+//         username: username,
+//         firstName: firstName,
+//         lastName: lastName,
+//         email: `nYvFf7${randomInteger}@example.com`,
+//         password: password,
+//         age: age,
+//       });
 
-// //     // Try to register with the same email again
-// //     const res = await request(app)
-// //       .post("/api/v1.0/register")
-// //       .send({
-// //         username: username,
-// //         firstName: firstName,
-// //         lastName: lastName,
-// //         email: `nYvFf7${randomInteger}@example.com`,
-// //         password: password,
-// //         age: age,
-// //       });
+//     // Try to register with the same email again
+//     const res = await request(app)
+//       .post("/api/v1.0/register")
+//       .send({
+//         username: username,
+//         firstName: firstName,
+//         lastName: lastName,
+//         email: `nYvFf7${randomInteger}@example.com`,
+//         password: password,
+//         age: age,
+//       });
 
-// //     expect(res.statusCode).toBe(422); // Adjust based on your actual response for duplicates
-// //     expect(res.body).toHaveProperty("status", "failed");
-// //     expect(res.body).toHaveProperty("errors", expect.any(Array));
-// //   });
-// // });
+//     expect(res.statusCode).toBe(422); // Adjust based on your actual response for duplicates
+//     expect(res.body).toHaveProperty("status", "failed");
+//     expect(res.body).toHaveProperty("errors", expect.any(Array));
+//   });
+// });
 
 // Login
 describe("POST /api/v1.0/login", () => {
@@ -150,11 +150,11 @@ describe("POST /api/v1.0/login", () => {
 //     // expect(res.statusCode).toEqual(200);
 //     // expect(res.body.data).toHaveLength(0); // assuming no users in DB
 //   });
-// });lastName
+// });
 
 // // Getbyid
 
-// describe("GET /api/v1.0/admin/user/113", () => {
+// describe("GET /api/v1.0/admin/user/114", () => {
 //   let token: string;
 
 //   // Before all tests, login to get the authentication token
@@ -169,7 +169,7 @@ describe("POST /api/v1.0/login", () => {
 //     token = res.body.data.accessToken; // Store the token for future use
 //   });
 //   it("should return a user by ID", async () => {
-//     const userId = 113; // Use an existing ID or mock this as needed
+//     const userId = 114; // Use an existing ID or mock this as needed
 
 //     const res = await request(app)
 //       .get(`/api/v1.0/admin/user/${userId}`)
@@ -177,11 +177,11 @@ describe("POST /api/v1.0/login", () => {
 
 //     expect(res.statusCode).toEqual(200);
 //     expect(res.body).toHaveProperty("status", "success");
-//     expect(res.body.data).toHaveProperty("id", 113); // Check if the returned user has the expected ID
+//     expect(res.body.data).toHaveProperty("id", 114); // Check if the returned user has the expected ID
 //   });
 
 //   it("should return 404 if user not found", async () => {
-//     const userId = 20;
+//     const userId = 999;
 //     const res = await request(app)
 //       .get(`/api/v1.0/admin/user/${userId}`)
 //       .set("Authorization", `Bearer ${token}`);
@@ -194,9 +194,102 @@ describe("POST /api/v1.0/login", () => {
 
 // delete user
 
-//
+// describe("DELETE /api/v1.0/admin/user/100", () => {
+//   let token: string;
 
-describe("PUT /api/v1.0admin/user/114", () => {
+//   // Before all tests, login to get the authentication token
+//   beforeAll(async () => {
+//     const res = await request(app)
+//       .post("/api/v1.0/login") // or any route that generates a token
+//       .send({
+//         username: "somtoo10",
+//         password: "123456780",
+//       });
+
+//     token = res.body.data.accessToken; // Store the token for future use
+//   });
+
+//   it("should delete an existing user", async () => {
+//     const userId = 100; // Use an existing ID or mock this as needed
+
+//     const res = await request(app)
+//       .delete(`/api/v1.0/admin/user/${userId}`)
+//       .set("Authorization", `Bearer ${token}`);
+
+//     expect(res.statusCode).toEqual(200);
+//     expect(res.body).toHaveProperty("status", "success");
+//     // expect(res.body.data).toBe("User");
+//   });
+
+//   it("should return 404 if user not found", async () => {
+//     const userId = 1000;
+
+//     const res = await request(app)
+//       .delete(`/api/v1.0/admin/user/${userId}`)
+//       .set("Authorization", `Bearer ${token}`);
+
+//     expect(res.statusCode).toEqual(404);
+//     expect(res.body).toHaveProperty("status", "failed");
+//     expect(res.body).toHaveProperty("message", "User not found");
+//   });
+// });
+
+// update user
+
+// describe("PUT /api/v1.0/admin/user/99", () => {
+//   let token: string;
+
+//   //   // Before all tests, login to get the authentication token
+//   beforeAll(async () => {
+//     const res = await request(app)
+//       .post("/api/v1.0/login") // or any route that generates a token
+//       .send({
+//         username: "somtoo10",
+//         password: "123456780",
+//       });
+
+//     token = res.body.data.accessToken;
+//   });
+//   it("should update an existing user", async () => {
+//     const userId = 99;
+//     const res = await request(app)
+//       .put(`/api/v1.0/admin/user/${userId}`)
+//       .send({
+//         firstName: "uwa",
+//         lastName: lastName,
+//         email: `nYvFf7${randomInteger}@example.com`,
+//         age: age,
+//         username: username,
+//       })
+//       .set("Authorization", `Bearer ${token}`);
+
+//     expect(res.statusCode).toEqual(200);
+//     expect(res.body).toHaveProperty("status", "success");
+//     expect(res.body.data).toHaveProperty("id", 99);
+//   });
+
+//   it("should return 404 if user not found", async () => {
+//     const userId = 99999;
+
+//     const res = await request(app)
+//       .put(`/api/v1.0/admin/user/${userId}`) // assuming this ID doesn't exist
+//       .send({
+//         firstName: "firstName",
+//         lastName: "lastName",
+//         email: `nYvFf7${randomInteger}@example.com`,
+//         age: "99999999",
+//         username: "username",
+//       });
+
+//     // expect(res.statusCode).toEqual(404);
+//     expect(res.body).toHaveProperty("status", "failed");
+//     expect(res.body).toHaveProperty("message", "User not found");
+//   });
+// });
+
+// update profile
+
+describe("PUT /api/v1.0/profile/98", () => {
   let token: string;
 
   //   // Before all tests, login to get the authentication token
@@ -208,42 +301,89 @@ describe("PUT /api/v1.0admin/user/114", () => {
         password: "123456780",
       });
 
-    token = res.body.data.accessToken; // Store the token for future use
+    token = res.body.data.accessToken;
+  });
+  it("should update the user's profile", async () => {
+    const userId = 98; // Replace with a valid user ID
 
-    it("should update an existing user", async () => {
-      const userId = 114;
-      const res = await request(app)
-        .put(`/api/v1.0/admin/user/${userId}`)
-        .send({
-          firstName: "Jane",
-          lastName: lastName,
-          email: `nYvFf7${randomInteger}@example.com`,
-          age: age,
-          username: username,
-        })
-        .set("Authorization", `Bearer ${token}`);
+    const res = await request(app)
+      .put(`/api/v1.0/profile/${userId}`)
+      .set("Authorization", `Bearer ${token}`) // Authorization with token
+      .send({
+        username: username,
+        email: `nYvFf7${randomInteger}@example.com`,
+        firstName: firstName,
+        lastName: lastName,
+        age: age,
+        password: password,
+      });
 
-      expect(res.statusCode).toEqual(200);
-      expect(res.body).toHaveProperty("status", "success");
-      expect(res.body.data).toHaveProperty("id", 114);
-    });
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty("status", "success");
+    expect(res.body.data).toHaveProperty("id", userId);
+  });
 
-    it("should return 404 if user not found", async () => {
-      const userId = 99999;
+  it("should return 404 if the user is not found", async () => {
+    const nonExistentUserId = 99999; // Non-existent ID
 
-      const res = await request(app)
-        .put(`/api/v1.0/admin/user/${userId}`) // assuming this ID doesn't exist
-        .send({
-          firstName: firstName,
-          lastName: lastName,
-          email: `nYvFf7${randomInteger}@example.com`,
-          age: age,
-          username: username,
-        });
+    const res = await request(app)
+      .put(`/api/v1.0/profile/${nonExistentUserId}`)
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        username: username,
+        email: `nYvFf7${randomInteger}@example.com`,
+        firstName: firstName,
+        lastName: lastName,
+        age: age,
+        password: password,
+      });
 
-      expect(res.statusCode).toEqual(404);
-      expect(res.body).toHaveProperty("status", "failed");
-      expect(res.body).toHaveProperty("message", "User not found");
-    });
+    expect(res.statusCode).toEqual(404);
+    expect(res.body).toHaveProperty("status", "failed");
+    expect(res.body).toHaveProperty("message", "User not found");
+  });
+});
+
+// get profile by id
+
+describe("GET /api/v1.0/profile/95", () => {
+  let token: string;
+
+  //   // Before all tests, login to get the authentication token
+  beforeAll(async () => {
+    const res = await request(app)
+      .post("/api/v1.0/login") // or any route that generates a token
+      .send({
+        username: "somtoo10",
+        password: "123456780",
+      });
+
+    token = res.body.data.accessToken;
+  });
+
+  it("should return the user's profile", async () => {
+    const userId = 95; // Replace with a valid user ID
+
+    const res = await request(app)
+      .get(`/api/v1.0/profile/${userId}`)
+      .set("Authorization", `Bearer ${token}`); // Authorization with token
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty("status", "success");
+    expect(res.body.data).toHaveProperty("id", userId);
+    // expect(res.body.data).toHaveProperty("username", expect.any(String));
+    // expect(res.body.data).toHaveProperty("email", expect.any(String));
+  });
+
+  it("should return 404 if the user is not found", async () => {
+    const nonExistentUserId = 99999;
+
+    const res = await request(app)
+      .get(`/api/v1.0/profile/${nonExistentUserId}`)
+      .set("Authorization", `Bearer ${token}`);
+
+    expect(res.statusCode).toEqual(404);
+    expect(res.body).toHaveProperty("status", "failed");
+    expect(res.body).toHaveProperty("message", "User not found");
   });
 });
